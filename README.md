@@ -6,8 +6,9 @@ A simple disk stress test tool. It continuously creates and deletes files on the
 
 Install the [Rust toolchain](https://rustup.rs) first.
 
+After that run:
 ```
-cargo install --git https://github.com/pcgeek86/disk-thrash.git
+cargo install --git https://github.com/SteveWyntontje/disk-thrash.git
 ```
 
 ## Usage
