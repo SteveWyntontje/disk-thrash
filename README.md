@@ -25,7 +25,7 @@ To specify a parent directory for the temporary files:
 disk-thrash --parent-dir /path/to/parent/directory
 ```
 
-The default buffer size is 100 MB
+The default buffer size is 100 MiB
 To specify a different buffer size for the temporary files:
 
 ```
