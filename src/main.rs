@@ -38,14 +38,14 @@ fn disk_thrash(parent_dir: &PathBuf, buffer: &[u8]) -> std::io::Result<()> {
 	}
 
 	let mut file = File::create(&filename)?;
-	file.write_all(buffer).await?;
-	file.sync_all().await?;
+	file.write_all(buffer)?;
+	file.sync_all()?;
 
 	let metadata = std::fs::metadata(&filename)?;
 	if metadata.len() != buffer.len() as u64 {
 		eprintln!("Error: File did not write the expected size: {} bytes written, expected {} bytes.", metadata.len(), buffer.len());
 	}
-	thread::sleep(std::time::Duration::from_secs(1)); // Sleep for 1 second before removing
+	thread::sleep(std::time::Duration::from_secs(2)); // Sleep for 2 second before removing
 
 	std::fs::remove_file(&filename)?;
 
