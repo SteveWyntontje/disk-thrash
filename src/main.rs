@@ -1,5 +1,5 @@
 use std::fs::File;
-use std::io::{self, Write};
+use std::io::Write;
 use std::thread;
 use std::sync::Arc;
 use uuid::Uuid;
@@ -38,15 +38,37 @@ fn disk_thrash(parent_dir: &PathBuf, buffer: &[u8]) -> std::io::Result<()> {
 	}
 
 	let mut file = File::create(&filename)?;
+	println!("Writing to file: {}", filename.display());
+
+	// Check if buffer is empty
+	if buffer.is_empty() {
+		return Err(std::io::Error::new(
+			std::io::ErrorKind::InvalidInput,
+			"Buffer is empty",
+		));
+	}
+
+	// Write the buffer to the file
 	file.write_all(buffer)?;
+	println!("Finished writing to file: {}", filename.display());
+
+	// Ensure data is flushed to disk
 	file.sync_all()?;
+	println!("File sync complete for: {}", filename.display());
 
 	let metadata = std::fs::metadata(&filename)?;
 	if metadata.len() != buffer.len() as u64 {
-		eprintln!("Error: File did not write the expected size: {} bytes written, expected {} bytes.", metadata.len(), buffer.len());
+		eprintln!(
+			"Error: File did not write the expected size: {} bytes written, expected {} bytes.",
+			metadata.len(),
+			buffer.len()
+		);
 	}
-	thread::sleep(std::time::Duration::from_secs(2)); // Sleep for 2 second before removing
 
+	// Sleep before removal
+	thread::sleep(std::time::Duration::from_secs(2));
+
+	// Remove the file
 	std::fs::remove_file(&filename)?;
 
 	{
