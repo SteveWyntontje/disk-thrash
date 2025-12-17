@@ -15,13 +15,13 @@ use lazy_static::lazy_static;
 #[derive(Parser, Debug)]
 #[command(author, version, about)]
 struct Args {
-    // Parent directory for random files
-    #[arg(short, long, default_value = ".")]
-    parent_dir: PathBuf,
+	// Parent directory for random files
+	#[arg(short, long, default_value = ".")]
+	parent_dir: PathBuf,
 
-    // Randomized buffer size in MB
-    #[arg(short, long, default_value = "100")]
-    buffer_size: usize,
+	// Randomized buffer size in MB
+	#[arg(short, long, default_value = "100")]
+	buffer_size: usize,
 }
 
 lazy_static! {
@@ -39,6 +39,7 @@ fn disk_thrash(parent_dir: &PathBuf, buffer: &[u8]) -> std::io::Result<()> {
 
     let mut file = File::create(&filename)?;
     file.write_all(buffer)?;
+    file.sync_all()?;
 
     std::fs::remove_file(&filename)?;
 
@@ -60,7 +61,8 @@ fn main() {
     let size = args.buffer_size * 1024 * 1024;
     let mut buffer = vec![0u8; size];
 
-    rand::rng().fill_bytes(&mut buffer);
+    let mut rng = rand::rng();
+    rng.fill_bytes(&mut buffer);
 
     let shared_buffer = Arc::new(buffer);
     let num_threads = num_cpus::get();
@@ -79,10 +81,10 @@ fn main() {
                 if let Err(e) = disk_thrash(&parent_dir, &buffer) {
                     eprintln!("Thread {} error: {}", id, e);
                 }
-            }
-            println!("Thread {} stopping", id);
-        }));
-    }
+			}
+			println!("Thread {} stopping", id);
+		}));
+	}
 
     for h in handles {
         h.join().unwrap();
