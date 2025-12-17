@@ -1,5 +1,5 @@
 use std::fs::File;
-use std::io::Write;
+use std::io::{self, Write};
 use std::thread;
 use std::sync::Arc;
 use uuid::Uuid;
@@ -38,8 +38,8 @@ fn disk_thrash(parent_dir: &PathBuf, buffer: &[u8]) -> std::io::Result<()> {
 	}
 
 	let mut file = File::create(&filename)?;
-	file.write_all(buffer)?;
-	file.sync_all()?;
+	file.write_all(buffer).await?;
+	file.sync_all().await?;
 
 	let metadata = std::fs::metadata(&filename)?;
 	if metadata.len() != buffer.len() as u64 {
