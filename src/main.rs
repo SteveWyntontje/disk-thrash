@@ -93,8 +93,7 @@ fn main() {
 	rng.fill_bytes(&mut buffer);
 
 	let shared_buffer = Arc::new(buffer);
-	let num_threads = num_cpus::get();
-	let num_threads = num_threads / 2;
+	let num_threads = num_cpus::get() - 2;
 
 	println!("Spawning {} threads", num_threads);
 
