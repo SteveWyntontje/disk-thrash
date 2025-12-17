@@ -66,7 +66,7 @@ fn disk_thrash(parent_dir: &PathBuf, buffer: &[u8]) -> std::io::Result<()> {
 	}
 
 	// Sleep before removal
-	thread::sleep(std::time::Duration::from_secs(2));
+	thread::sleep(std::time::Duration::from_secs(1));
 
 	// Remove the file
 	std::fs::remove_file(&filename)?;
